@@ -7,7 +7,18 @@
 
 import Foundation
 
-struct Character {
+struct RickAndMorty: Decodable {
+    let info: Info
+    let results: [Character]
+}
+
+struct Info: Decodable {
+    let pages: Int
+    let next: URL?
+    let prev: URL?
+}
+
+struct Character: Decodable {
     let id: Int
     let name: String
     let status: String
@@ -15,10 +26,10 @@ struct Character {
     let gender: String
     let origin: Location
     let location: Location
-    let image: String
-    let episode: [String]
+    let image: URL
+    let episode: [URL]
     let url: String
-    
+
     var description: String {
         """
     Name: \(name)
@@ -29,89 +40,34 @@ struct Character {
     Location: \(location.name)
     """
     }
-    
-    static func getCharacters() -> [Character] {
-        [
-            Character(
-                id: 1,
-                name: "Rick Sanchez",
-                status: "Alive",
-                species: "Human",
-                gender: "Male",
-                origin: Location(name: "Earth"),
-                location: Location(name: "Citadel of Ricks"),
-                image: "Logo",
-                episode: ["Pilot", "Lawnmower Dog", "Alexander"],
-                url: "https://rickandmortyapi.com/api/character/1"
-            ),
-            Character(
-                id: 1,
-                name: "Rick Sanchez",
-                status: "Alive",
-                species: "Human",
-                gender: "Male",
-                origin: Location(name: "Earth"),
-                location: Location(name: "Citadel of Ricks"),
-                image: "Logo",
-                episode: ["Pilot", "Lawnmower Dog", "Alexander"],
-                url: "https://rickandmortyapi.com/api/character/1"
-            ),
-            
-            Character(
-                id: 1,
-                name: "Rick Sanchez",
-                status: "Alive",
-                species: "Human",
-                gender: "Male",
-                origin: Location(name: "Earth"),
-                location: Location(name: "Citadel of Ricks"),
-                image: "Logo",
-                episode: ["Pilot", "Lawnmower Dog", "Alexander"],
-                url: "https://rickandmortyapi.com/api/character/1"
-            )
-        ]
-        
-    }
 }
 
 struct Location: Decodable {
     let name: String
 }
 
-struct Episode {
+struct Episode: Decodable {
     let name: String
     let air_date: String
     let episode: String
-    let characters: [String]
-    
+    let characters: [URL]
+
     var description: String {
         """
     Title: \(name)
     Date: \(air_date)
     """
     }
+}
+
+enum RickAndMortyAPI {
+    case baseURL
     
-    static func getEpisodes() -> [Episode] {
-        [
-            Episode(
-                name: "Pilot",
-                air_date: "22 april 2024",
-                episode: "S01E01",
-                characters: ["Rick", "Morty"]
-            ),
-            Episode(
-                name: "Pilot",
-                air_date: "22 april 2024",
-                episode: "S01E01",
-                characters: ["Rick", "Morty"]
-            ),
-            Episode(
-                name: "Pilot",
-                air_date: "22 april 2024",
-                episode: "S01E01",
-                characters: ["Rick", "Morty"]
-            )
-        ]
+    var url: URL {
+        switch self {
+        case .baseURL:
+            return URL(string: "https://rickandmortyapi.com/api/character")!
+        }
     }
 }
 

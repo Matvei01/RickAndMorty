@@ -9,11 +9,13 @@ import UIKit
 
 // MARK: - EpisodesViewController
 final class EpisodesViewController: UITableViewController {
-
-    // MARK: - Private Properties
-    let cellID = "episodeCell"
     
-    let episodes = Episode.getEpisodes()
+    // MARK: - Public Properties
+    var character: Character!
+    
+    // MARK: - Private Properties
+    private let cellID = "episodeCell"
+    private var episodes: [Episode] = []
     
     // MARK: - Override Methods
     override func viewDidLoad() {
@@ -27,11 +29,35 @@ final class EpisodesViewController: UITableViewController {
         tableView.rowHeight = 70
         tableView.backgroundColor = .secondarySystemBackground
         
+        fetchEpisodes()
+        
         setupNavigationBar()
     }
     
     private func setupNavigationBar() {
         title = "Episodes"
+    }
+    
+    private func fetchEpisodes() {
+        for episodeURL in character.episode {
+            fetchEpisode(from: episodeURL)
+        }
+    }
+    
+    private func fetchEpisode(from url: URL) {
+        NetworkManager.shared.fetchEpisode(from: url) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let episode):
+                self.episodes.append(episode)
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
 
@@ -40,15 +66,15 @@ extension EpisodesViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         episodes.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         
         let episode = episodes[indexPath.row]
         
         var content = cell.defaultContentConfiguration()
-        content.text = episode.name
         content.textProperties.font = UIFont.boldSystemFont(ofSize: 18)
+        content.text = episode.name
         
         cell.contentConfiguration = content
         cell.selectionStyle = .none
@@ -65,6 +91,6 @@ extension EpisodesViewController {
         let episodeDetailsVC = EpisodeDetailsViewController()
         episodeDetailsVC.episode = episode
         
-        navigationController?.pushViewController(episodeDetailsVC, animated: true)
+        self.navigationController?.pushViewController(episodeDetailsVC, animated: true)
     }
 }

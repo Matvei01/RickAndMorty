@@ -9,11 +9,17 @@ import UIKit
 
 // MARK: - CharactersViewController
 final class CharactersViewController: UITableViewController {
-
-    // MARK: - Private Properties
-    let characters = Character.getCharacters()
     
-    let cellID = "characterCell"
+    // MARK: - Private Properties
+    private let cellID = "characterCell"
+    
+    private var rickAndMorty: RickAndMorty?
+    
+    // MARK: -  Action
+    private lazy var updateData = UIAction { [unowned self] action in
+        guard let sender = action.sender as? UIBarButtonItem else { return }
+        
+    }
     
     // MARK: - Override Methods
     override func viewDidLoad() {
@@ -26,6 +32,8 @@ final class CharactersViewController: UITableViewController {
         tableView.rowHeight = 70
         tableView.backgroundColor = .secondarySystemBackground
         
+        fetchData()
+        
         setupNavigationBar()
     }
     
@@ -34,27 +42,46 @@ final class CharactersViewController: UITableViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", primaryAction: nil)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Prev", primaryAction: nil)
+        let prevButton = UIBarButtonItem(title: "Prev", primaryAction: updateData)
+        prevButton.tag = 0
+        
+        let nextButton = UIBarButtonItem(title: "Next", primaryAction: updateData)
+        nextButton.tag = 1
+        
+        navigationItem.leftBarButtonItem = prevButton
+        navigationItem.rightBarButtonItem = nextButton
+    }
+    
+    private func fetchData() {
+        NetworkManager.shared.fetchData(from: RickAndMortyAPI.baseURL.url) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let rickAndMorty):
+                self.rickAndMorty = rickAndMorty
+                self.tableView.reloadData()
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
 
 // MARK: - UITableViewDataSource
 extension CharactersViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        characters.count
+        rickAndMorty?.results.count ?? 0
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
-
+        
         guard let cell = cell as? CustomViewCell else  { return UITableViewCell() }
         
-        let character = characters[indexPath.row]
+        let character = rickAndMorty?.results[indexPath.row]
         
         cell.configure(character: character)
         cell.selectionStyle = .none
-        
         return cell
     }
 }
@@ -63,7 +90,7 @@ extension CharactersViewController {
 extension CharactersViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let characterDetailsVC = CharacterDetailsViewController()
-        let character = characters[indexPath.row]
+        let character = rickAndMorty?.results[indexPath.row]
         characterDetailsVC.character = character
         
         navigationController?.pushViewController(characterDetailsVC, animated: true)

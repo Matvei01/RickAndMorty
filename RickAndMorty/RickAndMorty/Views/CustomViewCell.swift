@@ -17,7 +17,6 @@ final class CustomViewCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 25
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
         return imageView
     }()
     
@@ -25,7 +24,6 @@ final class CustomViewCell: UITableViewCell {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         return label
     }()
     
@@ -41,9 +39,21 @@ final class CustomViewCell: UITableViewCell {
     }
     
     // MARK: - Public methods
-    func configure(character: Character) {
-        characterImageView.image = UIImage(named: character.image)
+    func configure(character: Character?) {
+        guard let character = character else { return }
+        
         nameLabel.text = character.name
+        
+        NetworkManager.shared.fetchImage(from: character.image) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let imageData):
+                self.characterImageView.image = UIImage(data: imageData)
+            case .failure(let error):
+                print("Error fetching image: \(error)")
+            }
+        }
     }
 }
 
@@ -51,6 +61,7 @@ final class CustomViewCell: UITableViewCell {
 private extension CustomViewCell {
     func setupView() {
         contentView.backgroundColor = .secondarySystemBackground
+        
         addSubviews()
         
         setConstraints()
