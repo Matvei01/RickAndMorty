@@ -72,7 +72,7 @@ extension EpisodeDetailsViewController: UITableViewDataSource {
         
         let characterURL = episode.characters[indexPath.row]
         
-        NetworkManager.shared.fetchCharacter(from: characterURL) { result in
+        NetworkManager.shared.fetchData(Character.self, from: characterURL) { result in
             switch result {
             case .success(let character):
                 cell.configure(character: character)
@@ -134,10 +134,12 @@ private extension EpisodeDetailsViewController {
     
     func setCharacters() {
         for characterURL in episode.characters {
-            NetworkManager.shared.fetchCharacter(from: characterURL) { [weak self] result in
+            NetworkManager.shared.fetchData(Character.self, from: characterURL) { [weak self] result in
+                guard let self = self else { return }
+                
                 switch result {
                 case .success(let character):
-                    self?.characters.append(character)
+                    self.characters.append(character)
                 case .failure(let error):
                     print(error)
                 }

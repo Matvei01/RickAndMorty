@@ -15,6 +15,7 @@ final class EpisodesViewController: UITableViewController {
     
     // MARK: - Private Properties
     private let cellID = "episodeCell"
+    
     private var episodes: [Episode] = []
     
     // MARK: - Override Methods
@@ -44,8 +45,8 @@ final class EpisodesViewController: UITableViewController {
         }
     }
     
-    private func fetchEpisode(from url: URL) {
-        NetworkManager.shared.fetchEpisode(from: url) { [weak self] result in
+    private func fetchEpisode(from url: URL?) {
+        NetworkManager.shared.fetchData(Episode.self, from: url) { [weak self] result in
             guard let self = self else { return }
             
             switch result {

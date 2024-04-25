@@ -29,7 +29,7 @@ struct Character: Decodable {
     let image: URL
     let episode: [URL]
     let url: String
-
+    
     var description: String {
         """
     Name: \(name)
@@ -51,7 +51,7 @@ struct Episode: Decodable {
     let air_date: String
     let episode: String
     let characters: [URL]
-
+    
     var description: String {
         """
     Title: \(name)
@@ -64,10 +64,10 @@ enum RickAndMortyAPI {
     case baseURL
     
     var url: URL {
-        switch self {
-        case .baseURL:
-            return URL(string: "https://rickandmortyapi.com/api/character")!
+        guard let baseURL = URL(string: "https://rickandmortyapi.com/api/character") else {
+            fatalError("Invalid base URL")
         }
+        return baseURL
     }
 }
 
