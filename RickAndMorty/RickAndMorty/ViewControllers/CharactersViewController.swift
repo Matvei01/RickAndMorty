@@ -19,6 +19,12 @@ final class CharactersViewController: UITableViewController {
     private lazy var updateData = UIAction { [unowned self] action in
         guard let sender = action.sender as? UIBarButtonItem else { return }
         
+        switch sender.tag {
+        case 0:
+            fetchData(from: rickAndMorty?.info.prev)
+        default:
+            fetchData(from: rickAndMorty?.info.next)
+        }
     }
     
     // MARK: - Override Methods
@@ -59,9 +65,7 @@ final class CharactersViewController: UITableViewController {
             switch result {
             case .success(let rickAndMorty):
                 self.rickAndMorty = rickAndMorty
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+                self.tableView.reloadData()
             case .failure(let error):
                 print(error)
             }

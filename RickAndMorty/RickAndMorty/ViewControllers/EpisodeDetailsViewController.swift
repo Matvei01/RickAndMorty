@@ -82,7 +82,6 @@ extension EpisodeDetailsViewController: UITableViewDataSource {
         }
         
         cell.selectionStyle = .none
-        
         return cell
     }
 }
