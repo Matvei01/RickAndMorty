@@ -52,9 +52,7 @@ final class EpisodesViewController: UITableViewController {
             switch result {
             case .success(let episode):
                 self.episodes.append(episode)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+                self.tableView.reloadData()
             case .failure(let error):
                 print(error)
             }
