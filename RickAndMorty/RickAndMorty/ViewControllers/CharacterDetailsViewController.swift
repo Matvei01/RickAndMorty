@@ -48,11 +48,11 @@ final class CharacterDetailsViewController: UIViewController {
         guard let self = self else { return }
         
         let episodesVC = EpisodesViewController()
-                episodesVC.character = self.character
+        episodesVC.character = self.character
         
         let navEpisodesVC = UINavigationController(rootViewController: episodesVC)
         
-                self.present(navEpisodesVC, animated: true)
+        self.present(navEpisodesVC, animated: true)
     }
     
     // MARK: - Override Methods

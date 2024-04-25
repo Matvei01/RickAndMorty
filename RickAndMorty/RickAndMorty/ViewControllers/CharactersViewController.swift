@@ -32,7 +32,7 @@ final class CharactersViewController: UITableViewController {
         tableView.rowHeight = 70
         tableView.backgroundColor = .secondarySystemBackground
         
-        fetchData()
+        fetchData(from: RickAndMortyAPI.baseURL.url)
         
         setupNavigationBar()
     }
@@ -52,14 +52,16 @@ final class CharactersViewController: UITableViewController {
         navigationItem.rightBarButtonItem = nextButton
     }
     
-    private func fetchData() {
-        NetworkManager.shared.fetchData(from: RickAndMortyAPI.baseURL.url) { [weak self] result in
+    private func fetchData(from url: URL?) {
+        NetworkManager.shared.fetchData(RickAndMorty.self, from: url) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let rickAndMorty):
                 self.rickAndMorty = rickAndMorty
-                self.tableView.reloadData()
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             case .failure(let error):
                 print(error)
             }
