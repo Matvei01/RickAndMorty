@@ -7,6 +7,7 @@
 
 import UIKit
 
+// MARK: - CharacterDetailsViewController
 final class CharacterDetailsViewController: UIViewController {
     
     // MARK: - Public Properties
@@ -17,12 +18,10 @@ final class CharacterDetailsViewController: UIViewController {
     // MARK: - UI Elements
     private lazy var characterImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: character.image)
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 120
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
         return imageView
     }()
     
@@ -33,19 +32,27 @@ final class CharacterDetailsViewController: UIViewController {
         label.numberOfLines = 0
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         return label
     }()
     
-    // MARK: -  Action
-    private lazy var episodesButtonTapped = UIAction { [unowned self] _ in
-        let episodesVC = UINavigationController(rootViewController: EpisodesViewController())
-        
-        present(episodesVC, animated: true)
-    }
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
     
-    private lazy var backButtonTapped = UIAction { [unowned self] _ in
-        navigationController?.popViewController(animated: true)
+    // MARK: -  Action
+    private lazy var episodesButtonTapped = UIAction { [weak self] _ in
+        guard let self = self else { return }
+        
+        let episodesVC = EpisodesViewController()
+                episodesVC.character = self.character
+        
+        let navEpisodesVC = UINavigationController(rootViewController: episodesVC)
+        
+                self.present(navEpisodesVC, animated: true)
     }
     
     // MARK: - Override Methods
@@ -72,11 +79,15 @@ private extension CharacterDetailsViewController {
         
         setConstraints()
         
+        fetchImage()
+        
         setupNavigationBar()
     }
     
     func addSubviews() {
         setupSubviews(characterImageView, descriptionLabel)
+        
+        characterImageView.addSubview(activityIndicator)
     }
     
     func setupSubviews(_ subviews: UIView... ) {
@@ -92,11 +103,20 @@ private extension CharacterDetailsViewController {
             title: "Episodes",
             primaryAction: episodesButtonTapped
         )
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "Back",
-            primaryAction: backButtonTapped
-        )
+    }
+    
+    func fetchImage() {
+        NetworkManager.shared.fetchImage(from: character.image) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let imageData):
+                self.characterImageView.image = UIImage(data: imageData)
+                self.activityIndicator.stopAnimating()
+            case .failure(let error):
+                print("Error fetching image: \(error)")
+            }
+        }
     }
 }
 
@@ -114,6 +134,11 @@ private extension CharacterDetailsViewController {
             descriptionLabel.topAnchor.constraint(equalTo: characterImageView.bottomAnchor, constant: 40),
             descriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             descriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+        ])
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: characterImageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: characterImageView.centerYAnchor)
         ])
     }
 }

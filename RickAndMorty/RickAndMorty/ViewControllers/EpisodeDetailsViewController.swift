@@ -9,12 +9,20 @@ import UIKit
 
 // MARK: - EpisodeDetailsViewController
 final class EpisodeDetailsViewController: UIViewController {
-
-    // MARK: - Private Properties
-    let cellID = "episodeDetailsCell"
     
+    // MARK: - Public Properties
     var episode: Episode!
-    let characters = Character.getCharacters()
+    
+    // MARK: - Private Properties
+    private let cellID = "episodeDetailsCell"
+    
+    private var characters: [Character] = [] {
+        didSet {
+            if characters.count == episode.characters.count {
+                characters = characters.sorted { $0.id < $1.id }
+            }
+        }
+    }
     
     // MARK: - UI Elements
     private lazy var descriptionLabel: UILabel = {
@@ -24,7 +32,6 @@ final class EpisodeDetailsViewController: UIViewController {
         label.numberOfLines = 0
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         return label
     }()
     
@@ -33,7 +40,6 @@ final class EpisodeDetailsViewController: UIViewController {
         label.text = "Characters"
         label.font = .systemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         return label
     }()
     
@@ -44,7 +50,6 @@ final class EpisodeDetailsViewController: UIViewController {
         tableView.delegate = self
         tableView.rowHeight = 70
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
         return tableView
     }()
     
@@ -58,16 +63,24 @@ final class EpisodeDetailsViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension EpisodeDetailsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        characters.count
+        episode.characters.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         guard let cell = cell as? CustomViewCell else { return UITableViewCell() }
         
-        let character = characters[indexPath.row]
+        let characterURL = episode.characters[indexPath.row]
         
-        cell.configure(character: character)
+        NetworkManager.shared.fetchCharacter(from: characterURL) { result in
+            switch result {
+            case .success(let character):
+                cell.configure(character: character)
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
         cell.selectionStyle = .none
         
         return cell
@@ -77,8 +90,9 @@ extension EpisodeDetailsViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension EpisodeDetailsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let characterDetailsVC = CharacterDetailsViewController()
         let character = characters[indexPath.row]
+        
+        let characterDetailsVC = CharacterDetailsViewController()
         characterDetailsVC.character = character
         characterDetailsVC.cameFromEpisodeDetails = true
         
@@ -96,6 +110,8 @@ private extension EpisodeDetailsViewController {
         setupNavigationBar()
         
         setConstraints()
+        
+        setCharacters()
     }
     
     func addSubviews() {
@@ -114,6 +130,19 @@ private extension EpisodeDetailsViewController {
     
     func setupNavigationBar() {
         title = episode.episode
+    }
+    
+    func setCharacters() {
+        for characterURL in episode.characters {
+            NetworkManager.shared.fetchCharacter(from: characterURL) { [weak self] result in
+                switch result {
+                case .success(let character):
+                    self?.characters.append(character)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        }
     }
 }
 
