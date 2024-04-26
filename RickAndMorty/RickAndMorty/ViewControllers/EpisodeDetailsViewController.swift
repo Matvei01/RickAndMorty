@@ -11,14 +11,14 @@ import UIKit
 final class EpisodeDetailsViewController: UIViewController {
     
     // MARK: - Public Properties
-    var episode: Episode!
+    var episode: Episode?
     
     // MARK: - Private Properties
     private let cellID = "episodeDetailsCell"
     
     private var characters: [Character] = [] {
         didSet {
-            if characters.count == episode.characters.count {
+            if characters.count == episode?.characters.count {
                 characters = characters.sorted { $0.id < $1.id }
             }
         }
@@ -27,7 +27,7 @@ final class EpisodeDetailsViewController: UIViewController {
     // MARK: - UI Elements
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = episode.description
+        label.text = episode?.description
         label.font = UIFont(name: "Kefa", size: 18)
         label.numberOfLines = 0
         label.textAlignment = .left
@@ -63,21 +63,21 @@ final class EpisodeDetailsViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension EpisodeDetailsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        episode.characters.count
+        episode?.characters.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         guard let cell = cell as? CustomViewCell else { return UITableViewCell() }
         
-        let characterURL = episode.characters[indexPath.row]
+        let characterURL = episode?.characters[indexPath.row]
         
         NetworkManager.shared.fetchData(Character.self, from: characterURL) { result in
             switch result {
             case .success(let character):
                 cell.configure(character: character)
             case .failure(let error):
-                print(error)
+                print("Error fetching character: \(error)")
             }
         }
         
@@ -128,10 +128,15 @@ private extension EpisodeDetailsViewController {
     }
     
     func setupNavigationBar() {
-        title = episode.episode
+        title = episode?.episode
     }
     
     func setCharacters() {
+        guard let episode = episode else {
+            print("Episode is nil")
+            return
+        }
+        
         for characterURL in episode.characters {
             NetworkManager.shared.fetchData(Character.self, from: characterURL) { [weak self] result in
                 guard let self = self else { return }
@@ -140,7 +145,7 @@ private extension EpisodeDetailsViewController {
                 case .success(let character):
                     self.characters.append(character)
                 case .failure(let error):
-                    print(error)
+                    print("Error fetching character: \(error)")
                 }
             }
         }

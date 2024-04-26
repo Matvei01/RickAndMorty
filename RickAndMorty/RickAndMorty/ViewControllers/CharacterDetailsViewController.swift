@@ -11,7 +11,7 @@ import UIKit
 final class CharacterDetailsViewController: UIViewController {
     
     // MARK: - Public Properties
-    var character: Character!
+    var character: Character?
     
     var cameFromEpisodeDetails: Bool = false
     
@@ -27,7 +27,7 @@ final class CharacterDetailsViewController: UIViewController {
     
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = character.description
+        label.text = character?.description
         label.font = UIFont(name: "Apple Color Emoji", size: 18)
         label.numberOfLines = 0
         label.textAlignment = .left
@@ -97,7 +97,16 @@ private extension CharacterDetailsViewController {
     }
     
     func setupNavigationBar() {
-        title = character.name
+        title = character?.name
+        
+        if let topItem = navigationController?.navigationBar.topItem {
+            topItem.backBarButtonItem = UIBarButtonItem(
+                title: "",
+                style: .plain,
+                target: nil,
+                action: nil
+            )
+        }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "Episodes",
@@ -106,6 +115,11 @@ private extension CharacterDetailsViewController {
     }
     
     func fetchImage() {
+        guard let character = character else {
+                    print("Character is nil")
+                    return
+                }
+        
         NetworkManager.shared.fetchImage(from: character.image) { [weak self] result in
             guard let self = self else { return }
             

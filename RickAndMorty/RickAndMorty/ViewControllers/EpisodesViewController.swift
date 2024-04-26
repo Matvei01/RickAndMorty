@@ -11,7 +11,7 @@ import UIKit
 final class EpisodesViewController: UITableViewController {
     
     // MARK: - Public Properties
-    var character: Character!
+    var character: Character?
     
     // MARK: - Private Properties
     private let cellID = "episodeCell"
@@ -40,6 +40,11 @@ final class EpisodesViewController: UITableViewController {
     }
     
     private func fetchEpisodes() {
+        guard let character = character else {
+                    print("Character is nil")
+                    return
+                }
+        
         for episodeURL in character.episode {
             fetchEpisode(from: episodeURL)
         }
@@ -54,7 +59,7 @@ final class EpisodesViewController: UITableViewController {
                 self.episodes.append(episode)
                 self.tableView.reloadData()
             case .failure(let error):
-                print(error)
+                print("Error fetching episode: \(error)")
             }
         }
     }
