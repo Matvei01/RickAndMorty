@@ -40,7 +40,10 @@ final class CustomViewCell: UITableViewCell {
     
     // MARK: - Public methods
     func configure(character: Character?) {
-        guard let character = character else { return }
+        guard let character = character else {
+            print("Character is nil")
+            return
+        }
         
         nameLabel.text = character.name
         

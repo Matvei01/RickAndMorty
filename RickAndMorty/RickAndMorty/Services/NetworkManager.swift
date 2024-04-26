@@ -36,8 +36,8 @@ final class NetworkManager {
                 DispatchQueue.main.async {
                     completion(.success(type))
                 }
-            } catch let error {
-                print(error.localizedDescription)
+            } catch {
+                completion(.failure(.decodingError))
             }
         }.resume()
     }

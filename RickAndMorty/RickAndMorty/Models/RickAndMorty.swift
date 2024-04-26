@@ -48,15 +48,20 @@ struct Location: Decodable {
 
 struct Episode: Decodable {
     let name: String
-    let air_date: String
+    let date: String
     let episode: String
     let characters: [URL]
     
     var description: String {
         """
     Title: \(name)
-    Date: \(air_date)
+    Date: \(date)
     """
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case name, episode, characters
+        case date = "air_date"
     }
 }
 
