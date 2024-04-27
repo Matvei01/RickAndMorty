@@ -41,9 +41,9 @@ final class EpisodesViewController: UITableViewController {
     
     private func fetchEpisodes() {
         guard let character = character else {
-                    print("Character is nil")
-                    return
-                }
+            print("Character is nil")
+            return
+        }
         
         for episodeURL in character.episode {
             fetchEpisode(from: episodeURL)

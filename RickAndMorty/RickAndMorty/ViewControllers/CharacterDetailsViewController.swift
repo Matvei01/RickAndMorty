@@ -77,6 +77,7 @@ private extension CharacterDetailsViewController {
         
         addSubviews()
         
+        
         setConstraints()
         
         fetchImage()
@@ -116,9 +117,9 @@ private extension CharacterDetailsViewController {
     
     func fetchImage() {
         guard let character = character else {
-                    print("Character is nil")
-                    return
-                }
+            print("Character is nil")
+            return
+        }
         
         NetworkManager.shared.fetchImage(from: character.image) { [weak self] result in
             guard let self = self else { return }
@@ -138,21 +139,43 @@ private extension CharacterDetailsViewController {
 private extension CharacterDetailsViewController {
     func setConstraints() {
         NSLayoutConstraint.activate([
-            characterImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            characterImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            characterImageView.widthAnchor.constraint(equalToConstant: 240),
-            characterImageView.heightAnchor.constraint(equalToConstant: 240)
+            characterImageView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 16
+            ),
+            characterImageView.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            ),
+            characterImageView.widthAnchor.constraint(
+                equalToConstant: 240
+            ),
+            characterImageView.heightAnchor.constraint(
+                equalToConstant: 240
+            )
         ])
         
         NSLayoutConstraint.activate([
-            descriptionLabel.topAnchor.constraint(equalTo: characterImageView.bottomAnchor, constant: 40),
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            descriptionLabel.topAnchor.constraint(
+                equalTo: characterImageView.bottomAnchor,
+                constant: 40
+            ),
+            descriptionLabel.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: 20
+            ),
+            descriptionLabel.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -20
+            )
         ])
         
         NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: characterImageView.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: characterImageView.centerYAnchor)
+            activityIndicator.centerXAnchor.constraint(
+                equalTo: characterImageView.centerXAnchor
+            ),
+            activityIndicator.centerYAnchor.constraint(
+                equalTo: characterImageView.centerYAnchor
+            )
         ])
     }
 }
