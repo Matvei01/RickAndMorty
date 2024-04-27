@@ -162,25 +162,48 @@ private extension EpisodeDetailsViewController {
     
     func setConstraintsForDescriptionLabel() {
         NSLayoutConstraint.activate([
-            descriptionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            descriptionLabel.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 40
+            ),
+            descriptionLabel.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: 20
+            ),
+            descriptionLabel.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -20
+            )
         ])
     }
     
     func setConstraintsForCharactersLabel() {
         NSLayoutConstraint.activate([
-            charactersLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 60),
-            charactersLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            charactersLabel.topAnchor.constraint(
+                equalTo: descriptionLabel.bottomAnchor,
+                constant: 60
+            ),
+            charactersLabel.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            )
         ])
     }
     
     func setConstraintsForCharactersTableView() {
         NSLayoutConstraint.activate([
-            charactersTableView.topAnchor.constraint(equalTo: charactersLabel.bottomAnchor, constant: 16),
-            charactersTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            charactersTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            charactersTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            charactersTableView.topAnchor.constraint(
+                equalTo: charactersLabel.bottomAnchor,
+                constant: 16
+            ),
+            charactersTableView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor
+            ),
+            charactersTableView.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor
+            ),
+            charactersTableView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            )
         ])
     }
 }

@@ -85,17 +85,39 @@ private extension CustomViewCell {
 private extension CustomViewCell {
     func setConstraints() {
         NSLayoutConstraint.activate([
-            characterImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            characterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            characterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            characterImageView.trailingAnchor.constraint(equalTo: nameLabel.leadingAnchor, constant: -7),
-            characterImageView.widthAnchor.constraint(equalToConstant: 50),
-            characterImageView.heightAnchor.constraint(equalToConstant: 50)
+            characterImageView.topAnchor.constraint(
+                equalTo: contentView.topAnchor,
+                constant: 10
+            ),
+            characterImageView.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -10
+            ),
+            characterImageView.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: 16
+            ),
+            characterImageView.trailingAnchor.constraint(
+                equalTo: nameLabel.leadingAnchor,
+                constant: -7
+            ),
+            characterImageView.widthAnchor.constraint(
+                equalToConstant: 50
+            ),
+            characterImageView.heightAnchor.constraint(
+                equalToConstant: 50
+            )
         ])
         
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 22),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+            nameLabel.topAnchor.constraint(
+                equalTo: contentView.topAnchor,
+                constant: 22
+            ),
+            nameLabel.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -16
+            )
         ])
     }
 }
